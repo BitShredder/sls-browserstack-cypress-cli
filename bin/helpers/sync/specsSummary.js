@@ -1,4 +1,4 @@
-const logger = require("../logger").syncCliLogger;
+const logger = require("../logger").syncconsole;
 
 /**
  *

@@ -2,7 +2,7 @@
 const request = require('request');
 
 const config = require("../helpers/config"),
-  logger = require("../helpers/logger").winstonLogger,
+  logger = require("../helpers/logger").console(),
   Constants = require("../helpers/constants"),
   utils = require("../helpers/utils");
 

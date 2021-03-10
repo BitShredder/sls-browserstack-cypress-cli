@@ -2,7 +2,7 @@
 const request = require("request"),
   config = require("../config"),
   utils = require("../utils"),
-  logger = require("../logger").syncCliLogger,
+  logger = require("../logger").syncconsole,
   async = require('async'),
   Constants = require("../constants"),
   tableStream = require('table').createStream,

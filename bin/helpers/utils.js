@@ -5,10 +5,10 @@ const fs = require("fs");
 const glob = require('glob');
 
 const usageReporting = require("./usageReporting"),
-  logger = require("./logger").winstonLogger,
+  logger = require("./logger").console(),
   Constants = require("./constants"),
   chalk = require('chalk'),
-  syncCliLogger = require("../helpers/logger").syncCliLogger,
+  syncconsole = require("../helpers/logger").syncconsole,
   config = require("../helpers/config");
 
 exports.validateBstackJson = (bsConfigPath) => {
@@ -360,10 +360,10 @@ exports.capitalizeFirstLetter = (stringToCapitalize) => {
 
 exports.handleSyncExit = (exitCode, dashboard_url) => {
   if (exitCode === config.networkErrorExitCode) {
-    syncCliLogger.info(this.getNetworkErrorMessage(dashboard_url));
+    syncconsole.info(this.getNetworkErrorMessage(dashboard_url));
   } else {
-    syncCliLogger.info(Constants.userMessages.BUILD_REPORT_MESSAGE);
-    syncCliLogger.info(dashboard_url);
+    syncconsole.info(Constants.userMessages.BUILD_REPORT_MESSAGE);
+    syncconsole.info(dashboard_url);
   }
   process.exit(exitCode);
 }

@@ -1,7 +1,7 @@
 const fs = require('fs'),
       path = require('path'),
       request = require('request'),
-      logger = require('./logger').winstonLogger,
+      logger = require('./logger').console(),
       utils = require("./utils"),
       Constants = require('./constants'),
       config = require("./config");

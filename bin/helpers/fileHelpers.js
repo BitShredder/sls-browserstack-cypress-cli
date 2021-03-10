@@ -2,7 +2,7 @@
 const fs = require('fs-extra'),
   path = require('path');
 
-const logger = require('./logger').winstonLogger,
+const logger = require('./logger').console(),
   Constants = require('../helpers/constants'),
   config = require('../helpers/config');
 

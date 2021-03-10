@@ -1,12 +1,12 @@
 'use strict';
-const cp = require("child_process"),
-  os = require("os"),
-  request = require("requestretry"),
-  fs = require('fs'),
-  path = require('path');
+const cp = require("child_process");
+const os = require("os");
+const request = require("requestretry");
+const fs = require('fs');
+const path = require('path');
 
 const config = require('./config'),
-  fileLogger = require('./logger').fileLogger;
+  fileLogger = require('./logger').console();
 
 function get_version(package_name) {
   try {

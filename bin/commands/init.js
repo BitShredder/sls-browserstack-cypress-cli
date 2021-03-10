@@ -1,7 +1,7 @@
 'use strict';
 const fileHelpers = require("../helpers/fileHelpers"),
   Constants = require("../helpers/constants"),
-  logger = require("../helpers/logger").winstonLogger,
+  logger = require("../helpers/logger").console(),
   utils = require("../helpers/utils"),
   util = require("util"),
   path = require('path');

@@ -1,7 +1,7 @@
 const tablePrinter = require('table'), // { table, getBorderCharacters }
       chalk = require('chalk'),
       Constants = require("../constants"),
-      logger = require("../logger").syncCliLogger,
+      logger = require("../logger").syncconsole,
       config = require("../config");
 
 /**

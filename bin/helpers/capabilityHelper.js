@@ -1,4 +1,4 @@
-const logger = require("./logger").winstonLogger,
+const logger = require("./logger").console(),
   Constants = require("./constants"),
   Utils = require("./utils"),
   fs = require('fs'),

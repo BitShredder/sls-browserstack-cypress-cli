@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
-const yargs = require('yargs'),
-  logger = require("./helpers/logger").winstonLogger,
-  Constants = require('./helpers/constants');
+const yargs = require('yargs');
+const logger = require("./helpers/logger").console();
+const Constants = require('./helpers/constants');
 
 function checkCommands(yargs, argv, numRequired) {
   if (argv._.length < numRequired) {
@@ -200,6 +200,16 @@ var argv = yargs
           default: false,
           describe: Constants.cliMessages.RUN.SYNC_DESCRIPTION,
           type: "boolean"
+        },
+        'log-file': {
+            default: './log',
+            type: 'string',
+            describe: Constants.cliMessages.COMMON.LOG_DIR_DESCRIPTION,
+        },
+        'callback-url': {
+            default: undefined,
+            description: Constants.cliMessages.RUN.CALLBACK_URL,
+            type: 'string',
         }
       })
       .help('help')

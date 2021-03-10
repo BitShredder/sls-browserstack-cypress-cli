@@ -1,6 +1,6 @@
 'use strict';
 
-const logger = require("../helpers/logger").winstonLogger,
+const logger = require("../helpers/logger").console(),
       Constants = require("../helpers/constants"),
       utils = require("../helpers/utils"),
       reporterHTML = require('../helpers/reporterHTML');
