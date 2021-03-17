@@ -42,18 +42,6 @@ const caps = (bsConfig, zip) => {
       reject("Test suite is empty");
     }
 
-    // Local
-    obj.local = false;
-    if (bsConfig.connection_settings && bsConfig.connection_settings.local === true) obj.local = true;
-    logger.info(`Local is set to: ${obj.local} (${obj.local ? Constants.userMessages.LOCAL_TRUE : Constants.userMessages.LOCAL_FALSE})`);
-
-    // Local Identifier
-    obj.localIdentifier = null;
-    if (obj.local === true && (bsConfig.connection_settings.localIdentifier || bsConfig.connection_settings.local_identifier)) {
-      obj.localIdentifier = bsConfig.connection_settings.localIdentifier || bsConfig.connection_settings.local_identifier;
-      logger.log(`Local Identifier is set to: ${obj.localIdentifier}`);
-    }
-
     // Project name
     obj.project = "project-name";
     // Build name
@@ -81,6 +69,7 @@ const caps = (bsConfig, zip) => {
       if (!Utils.isUndefined(bsConfig.run_settings.env)){
         obj.env = bsConfig.run_settings.env;
       }
+
       if (!Utils.isUndefined(bsConfig.run_settings.cypress_version)){
         obj.cypress_version = bsConfig.run_settings.cypress_version;
       }

@@ -9,21 +9,18 @@ const Constants = require("../helpers/constants");
 const utils = require("../helpers/utils");
 const fileHelpers = require("../helpers/fileHelpers");
 const syncRunner = require("../helpers/syncRunner");
-const reportGenerator = require('../helpers/reporterHTML').reportGenerator;
 
 module.exports = async function run(args) {
 
     let bsConfigPath = utils.getConfigPath(args.cf);
     let bsConfig;
-    let zip;
+    let zipstream;
     let upload;
 
     try {
 
-        utils.deleteResults();
         bsConfig = await utils.validateBstackJson(bsConfigPath);
 
-        utils.setUsageReportingFlag(bsConfig, args.disableUsageReporting);
         utils.setDefaults(bsConfig, args);
         utils.setUsername(bsConfig, args);
         utils.setAccessKey(bsConfig, args);
@@ -31,15 +28,11 @@ module.exports = async function run(args) {
         utils.setCypressConfigFilename(bsConfig, args);
         utils.setUserSpecs(bsConfig, args);
         utils.setTestEnvs(bsConfig, args);
-
-        utils.setLocal(bsConfig);
-        utils.setLocalIdentifier(bsConfig);
+        utils.setCallbackUrl(bsConfig, args);
 
     } catch (err) {
 
         console.error(err);
-        utils.setUsageReportingFlag(null, args.disableUsageReporting);
-        utils.sendUsageReport(null, args, err.message, Constants.messageTypes.ERROR, utils.getErrorCodeFromErr(err));
         return;
     }
 
@@ -68,8 +61,14 @@ module.exports = async function run(args) {
 
     try {
 
-        zip = archive(bsConfig.run_settings, args.exclude);
-        upload = await zipUploader.zipUpload(bsConfig, zip);
+        // get zip from fs or generate from files
+        if (args['zip-file'] && fileHelpers.fileExists(args['zip-file'])) {
+            zipstream = fs.createReadStream(bsConfig.run_settings.zipFile);
+        } else {
+            zipstream = archive(bsConfig.run_settings, args.exclude);
+        }
+
+        upload = await zipUploader.zipUpload(bsConfig, zipstream);
 
     } catch (err) {
 
@@ -88,8 +87,6 @@ module.exports = async function run(args) {
         let message = `${buildData.message}! ${Constants.userMessages.BUILD_CREATED} with build id: ${buildData.build_id}`;
         let dashboardLink = `${Constants.userMessages.VISIT_DASHBOARD} ${buildData.dashboard_url}`;
 
-        //utils.exportResults(buildData.build_id, `${config.dashboardUrl}${buildData.build_id}`);
-
         if ((utils.isUndefined(bsConfig.run_settings.parallels) && utils.isUndefined(args.parallels)) || (!utils.isUndefined(bsConfig.run_settings.parallels) && bsConfig.run_settings.parallels == Constants.cliMessages.RUN.DEFAULT_PARALLEL_MESSAGE)) {
             logger.warn(Constants.userMessages.NO_PARALLELS);
         }
@@ -107,21 +104,14 @@ module.exports = async function run(args) {
         if (args.sync) {
 
             const exitCode = await syncRunner.pollBuildStatus(bsConfig, buildData);
+            utils.handleSyncExit(exitCode, buildData.dashboard_url);
 
-            // Generate custom report!
-            reportGenerator(bsConfig, buildData.build_id, args, function() {
-                utils.sendUsageReport(bsConfig, args, `${message}\n${dashboardLink}`, Constants.messageTypes.SUCCESS, null);
-                utils.handleSyncExit(exitCode, buildData.dashboard_url);
-            });
-
+        } else {
+            logger.info(Constants.userMessages.EXIT_SYNC_CLI_MESSAGE.replace("<build-id>", buildData.build_id));
         }
 
         logger.info(message);
         logger.info(dashboardLink);
-
-        if (!args.sync) {
-            logger.info(Constants.userMessages.EXIT_SYNC_CLI_MESSAGE.replace("<build-id>", buildData.build_id));
-        }
 
         utils.sendUsageReport(bsConfig, args, `${message}\n${dashboardLink}`, Constants.messageTypes.SUCCESS, null);
 

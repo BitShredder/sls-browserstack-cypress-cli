@@ -1,5 +1,5 @@
 {
-    "name": "browserstack-cypress-runner",
+    "name": "serverless-browserstack-cypress-cli",
     "version": "1.0.0",
     "description": "Fork of the BrowserStack Cypress CLI for Cypress integration with BrowserStack's remote devices.",
     "main": "index.js",
@@ -9,7 +9,7 @@
     "author": "BitShredder",
     "license": "MIT",
     "bin": {
-        "browserstack-cypress": "bin/runner.js"
+        "serverless-browserstack-cypress": "bin/runner.js"
     },
     "dependencies": {
         "archiver": "^5.2.0",

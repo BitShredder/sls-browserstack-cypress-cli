@@ -1,7 +1,4 @@
 const winston = require('winston');
-const fs = require("fs");
-const path = require("path");
-
 
 module.exports = {
 
@@ -12,13 +9,6 @@ module.exports = {
                 colorize: true,
                 timestamp: () => `[${new Date().toLocaleString()}]`,
                 prettyPrint: true,
-            }),
-        ]
-    }),
-    file: () => new winston.Logger({
-        transports: [
-            new winston.transports.File({
-                filename: path.join(logDir, filename),
             }),
         ]
     }),

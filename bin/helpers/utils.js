@@ -1,15 +1,15 @@
-"use strict";
 const os = require("os");
 const path = require("path");
 const fs = require("fs");
 const glob = require('glob');
 
-const usageReporting = require("./usageReporting"),
-  logger = require("./logger").console(),
-  Constants = require("./constants"),
-  chalk = require('chalk'),
-  syncconsole = require("../helpers/logger").syncconsole,
-  config = require("../helpers/config");
+const usageReporting = require("./usageReporting");
+const logger = require("./logger").console();
+const Constants = require("./constants");
+const chalk = require('chalk');
+const syncconsole = require("../helpers/logger").syncconsole;
+const config = require("../helpers/config");
+const fileHelpers = require('../helpers/fileHelpers');
 
 exports.validateBstackJson = (bsConfigPath) => {
   return new Promise(function (resolve, reject) {
@@ -234,6 +234,15 @@ exports.setTestEnvs = (bsConfig, args) => {
   }
 }
 
+// set callback url
+exports.setCallbackUrl = (bsConfig, args) => {
+    if (!this.isUndefined(args['callback-url'])) {
+        bsConfig.run_settings.callback_url = args['callback-url'];
+    } else {
+        bsConfig.run_settings.callback_url = null;
+    }
+}
+
 exports.fixCommaSeparatedString = (string) => {
   return string.split(/\s{0,},\s+/).join(',');
 }
@@ -272,24 +281,6 @@ exports.configCreated = (args) => {
   );
 };
 
-exports.exportResults = (buildId, buildUrl) => {
-  let data = "BUILD_ID=" + buildId + "\nBUILD_URL=" + buildUrl;
-  fs.writeFileSync("log/build_results.txt", data, function (err) {
-    if (err) {
-      logger.warn(
-        `Couldn't write BUILD_ID with value: ${buildId} to browserstack/build_results.txt`
-      );
-      logger.warn(
-        `Couldn't write BUILD_URL with value: ${buildUrl} to browserstack/build_results.txt`
-      );
-    }
-  });
-};
-
-exports.deleteResults = () => {
-  fs.unlink("log/build_results.txt", function (err) {});
-};
-
 exports.isCypressProjDirValid = (cypressProjDir, integrationFoldDir) => {
   // Getting absolute path
   let cypressDir = path.resolve(cypressProjDir);
@@ -301,36 +292,6 @@ exports.isCypressProjDirValid = (cypressProjDir, integrationFoldDir) => {
   let parentTokens = cypressDir.split(path.sep).filter((i) => i.length);
   let childTokens = integrationFolderDir.split(path.sep).filter((i) => i.length);
   return parentTokens.every((t, i) => childTokens[i] === t);
-};
-
-exports.getLocalFlag = (connectionSettings) => {
-  return (
-    !this.isUndefined(connectionSettings) &&
-    !this.isUndefined(connectionSettings.local) &&
-    connectionSettings.local
-  );
-};
-
-exports.setLocal = (bsConfig) => {
-  if (!this.isUndefined(process.env.BROWSERSTACK_LOCAL)) {
-    let local = false;
-    if (String(process.env.BROWSERSTACK_LOCAL).toLowerCase() === "true")
-      local = true;
-    bsConfig["connection_settings"]["local"] = local;
-    logger.info(
-      "Reading local setting from the environment variable BROWSERSTACK_LOCAL"
-    );
-  }
-};
-
-exports.setLocalIdentifier = (bsConfig) => {
-  if (!this.isUndefined(process.env.BROWSERSTACK_LOCAL_IDENTIFIER)) {
-    bsConfig["connection_settings"]["local_identifier"] =
-      process.env.BROWSERSTACK_LOCAL_IDENTIFIER;
-    logger.info(
-      "Reading local identifier from the environment variable BROWSERSTACK_LOCAL_IDENTIFIER"
-    );
-  }
 };
 
 exports.getNumberOfSpecFiles = (bsConfig, args, cypressJson) => {
@@ -354,6 +315,7 @@ exports.getBrowserCombinations = (bsConfig) => {
   }
   return osBrowserArray;
 };
+
 exports.capitalizeFirstLetter = (stringToCapitalize) => {
   return stringToCapitalize && (stringToCapitalize[0].toUpperCase() + stringToCapitalize.slice(1));
 };
