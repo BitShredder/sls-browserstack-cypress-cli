@@ -5,9 +5,9 @@ allows you to run your Cypress tests on BrowserStack. Can be invoked
 from a serverless environment like AWS Lambda, which has a read-only filesystem, without needing a CI environment.
 
 ## Features
-- Uses streams to pipe zipped test suite files directly to the BrowserStack Automate API endpoint (no need for slow disc IO)
+- Uses streams to pipe zipped test suite files directly to the BrowserStack Automate API endpoint (no need for a writeable filesystem)
 - Logs all output to the console
-- No reporting
+- No HTML report generation
 - Callback config from CLI
 
 ## License
